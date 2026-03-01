@@ -162,12 +162,7 @@ void handle_user_input(bool sub_process_mode) {
         if (!sub_process_mode){
             header_print("FLM", "Enter 'exit' or use 'Ctrl+C' to stop the server: ");
         }
-        if (!std::getline(std::cin, input)) {
-            // Handle EOF or input error to avoid spinning in a tight loop
-            should_exit = true;
-            exit_cv.notify_all();
-            break;
-        }
+        std::getline(std::cin, input);
         if (input == "exit") {
             should_exit = true;
             exit_cv.notify_all();
