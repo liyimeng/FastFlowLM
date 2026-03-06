@@ -10,7 +10,7 @@ This guide will help you get started with FastFlowLM on Linux, including setup f
 
 ---
 
-## 1. Prerequisites
+## Prerequisites
 - `amdxdna` driver (included in kernel 7.0+, or via `amdxdna-dkms`)
 - NPU firmware version 1.1.0.0 or later
 - Python 3.8+
@@ -18,7 +18,7 @@ This guide will help you get started with FastFlowLM on Linux, including setup f
 
 ---
 
-## 2. System Preparation
+## System Preparation
 
 
 ### Ubuntu (24.04, 25.10)
@@ -79,7 +79,7 @@ sudo apt install ./fastflowlm*.deb
 
 ---
 
-## 4. Validating NPU Setup
+## Validating NPU Setup
 
 To validate your NPU setup, run:
 ```sh
