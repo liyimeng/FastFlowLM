@@ -451,10 +451,19 @@ static bool sanity_check_npu_stack(bool quiet, bool json_output = false) {
             ? "infinity"
             : std::to_string(static_cast<unsigned long long>(rl.rlim_cur));
         if (rl.rlim_cur != RLIM_INFINITY && rl.rlim_cur < 100 * 1024 * 1024) {
-            if (print_human) {
-                header_print_r("ERROR", "Memlock limit is too low (" << (rl.rlim_cur / 1024 / 1024) << "MB). Please raise the limit or set to infinity.");
+            struct rlimit rl_new = { RLIM_INFINITY, RLIM_INFINITY };
+            if (setrlimit(RLIMIT_MEMLOCK, &rl_new) == 0) {
+                rl.rlim_cur = RLIM_INFINITY;
+                rl.rlim_max = RLIM_INFINITY;
+                validation_json["memlock_limit"] = "infinity";
+                if (print_human)
+                    header_print_g("Linux", "Memlock Limit: set to infinity");
+            } else {
+                if (print_human) {
+                    header_print_r("ERROR", "Memlock limit is too low (" << (rl.rlim_cur / 1024 / 1024) << "MB). Please raise the limit or set to infinity.");
+                }
+                memlock_ok = false;
             }
-            memlock_ok = false;
         } else if (print_human) {
             if (rl.rlim_cur == RLIM_INFINITY) {
                 header_print_g("Linux", "Memlock Limit: infinity");
