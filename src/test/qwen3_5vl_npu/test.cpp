@@ -67,10 +67,8 @@ int main(int argc, char* argv[]) {
     chat->set_topk(1);
 
     if (short_prompt) {
-        uniformed_input.prompt = "Hello, how are you?";
-        // uniformed_input.prompt = "Who are you?";
-        //uniformed_input.images.push_back("C:/Users/alfred/Projects/FastFlowLM_Dev/libraries/panda.png");
-        // uniformed_input.images.push_back("../../../tb_files/panda.png");
+        uniformed_input.prompt = "What is this?";
+        uniformed_input.images.push_back("../../../tb_files/panda.png");
         
         // uniformed_input.images.push_back("../../../tb_files/mj_icon.jpg");
         // uniformed_input.images.push_back("../../../tb_files/google_icon.png");
@@ -84,18 +82,18 @@ int main(int argc, char* argv[]) {
         std::cout << std::endl;
         std::cout << std::endl;
         std::cout << chat->show_profile() << std::endl;
-        // uniformed_input.images.clear();
-        // uniformed_input.images.push_back(model_path + "/pcb.jpg");
-        // uniformed_input.images.push_back(model_path + "/puppy.png");
-        // uniformed_input.prompt = "What are these?";
-        // std::cout << "Prompt: " << uniformed_input.prompt << std::endl;
-        // std::cout << "Response: " << std::endl;
-        // chat->start_total_timer();
-        // response = chat->generate_with_prompt(meta_info, uniformed_input, 1024, std::cout);
-        // chat->stop_total_timer();
-        // std::cout << std::endl;
-        // std::cout << std::endl;
-        // std::cout << chat->show_profile() << std::endl;
+        uniformed_input.images.clear();
+        uniformed_input.images.push_back("../../../tb_files/pcb.jpg");
+        uniformed_input.prompt = "How about this?";
+        
+        std::cout << "Prompt: " << uniformed_input.prompt << std::endl;
+        std::cout << "Response: " << std::endl;
+        chat->start_total_timer();
+        response = chat->generate_with_prompt(meta_info, uniformed_input, 8192, std::cout);
+        chat->stop_total_timer();
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << chat->show_profile() << std::endl;
     }
     else{
         std::ifstream file("../../../../prompt.txt", std::ios::binary);
