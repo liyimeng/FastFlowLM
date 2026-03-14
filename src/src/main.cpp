@@ -451,10 +451,19 @@ static bool sanity_check_npu_stack(bool quiet, bool json_output = false) {
             ? "infinity"
             : std::to_string(static_cast<unsigned long long>(rl.rlim_cur));
         if (rl.rlim_cur != RLIM_INFINITY && rl.rlim_cur < 100 * 1024 * 1024) {
-            if (print_human) {
-                header_print_r("ERROR", "Memlock limit is too low (" << (rl.rlim_cur / 1024 / 1024) << "MB). Please raise the limit or set to infinity.");
+            struct rlimit rl_new = { RLIM_INFINITY, RLIM_INFINITY };
+            if (setrlimit(RLIMIT_MEMLOCK, &rl_new) == 0) {
+                rl.rlim_cur = RLIM_INFINITY;
+                rl.rlim_max = RLIM_INFINITY;
+                validation_json["memlock_limit"] = "infinity";
+                if (print_human)
+                    header_print_g("Linux", "Memlock Limit: set to infinity");
+            } else {
+                if (print_human) {
+                    header_print_r("ERROR", "Memlock limit is too low (" << (rl.rlim_cur / 1024 / 1024) << "MB). Please raise the limit or set to infinity.");
+                }
+                memlock_ok = false;
             }
-            memlock_ok = false;
         } else if (print_human) {
             if (rl.rlim_cur == RLIM_INFINITY) {
                 header_print_g("Linux", "Memlock Limit: infinity");
@@ -566,9 +575,10 @@ int main(int argc, char* argv[]) {
 #endif
 
     // Check if the commands and args valid
-    stable_stack = sanity_check_npu_stack(parsed_args.command != "validate", parsed_args.command == "validate" && parsed_args.json_output);
-    if (parsed_args.command == "validate")
+    if (parsed_args.command == "validate") {
+        stable_stack = sanity_check_npu_stack(parsed_args.command != "validate", parsed_args.command == "validate" && parsed_args.json_output);
         return stable_stack ? 0 : 1;
+    }
 
     if (parsed_args.command == "run" || parsed_args.command == "serve" || parsed_args.command == "pull" || parsed_args.command == "remove" || parsed_args.command == "bench") {
       if (parsed_args.model_tag != "model-faker" && (!availble_models.is_model_supported(parsed_args.model_tag))) {
@@ -598,6 +608,30 @@ int main(int argc, char* argv[]) {
     if (parsed_args.command == "serve" && parsed_args.model_tag.empty()) {
         parsed_args.model_tag = "model-faker"; // Use default tag
     }
+
+#ifndef _WIN32
+    // Raise memlock limit to accommodate the model being loaded
+    if ((parsed_args.command == "run" || parsed_args.command == "serve" || parsed_args.command == "bench") &&
+        parsed_args.model_tag != "model-faker" && !parsed_args.model_tag.empty()) {
+        auto [resolved_tag, model_info] = availble_models.get_model_info(parsed_args.model_tag);
+        if (model_info.contains("size")) {
+            rlim_t model_size = model_info["size"].get<uint64_t>();
+            // Add 512MB overhead for working memory beyond the model itself
+            rlim_t required = model_size + (512ULL * 1024 * 1024);
+            struct rlimit rl;
+            if (getrlimit(RLIMIT_MEMLOCK, &rl) == 0) {
+                if (rl.rlim_cur != RLIM_INFINITY && rl.rlim_cur < required) {
+                    struct rlimit rl_new = { required, required };
+                    if (setrlimit(RLIMIT_MEMLOCK, &rl_new) == 0) {
+                        header_print_g("Linux", "Memlock Limit: raised to " << (required / 1024 / 1024) << " MB for " << resolved_tag);
+                    } else {
+                        header_print("Linux", "Warning: could not raise memlock limit to " << (required / 1024 / 1024) << " MB");
+                    }
+                }
+            }
+        }
+    }
+#endif
 
     // code for all commands:
     
@@ -710,6 +744,7 @@ int main(int argc, char* argv[]) {
                     bool is_present = downloader.is_model_downloaded(model["name"].get<std::string>(), parsed_args.sub_process_mode);
                     if ((parsed_args.list_filter == "installed") == is_present || parsed_args.list_filter == "all") {
                         nlohmann::json model_entry = model;
+                        model_entry["installed"] = is_present ? true : false;
                         output_json["models"].push_back(model_entry);
                     }
                 }

@@ -26,7 +26,7 @@ std::string find_model_list() {
     const char* env_path = std::getenv("FLM_CONFIG_PATH");
     if (env_path && *env_path) {
         if (std::filesystem::exists(env_path)) {
-            header_print("FLM", "Using custom model list path: " + std::string(env_path));
+            std::cerr << "[FLM]  Using custom model list path: " << env_path << std::endl;
             return env_path;
         }
     }
