@@ -19,26 +19,26 @@
 #include <immintrin.h>  // For AVX intrinsics
 #endif
 
-#define QWEN3_5_VL_4B 1
+// #define QWEN3_5_VL_4B 1
 
-#ifdef QWEN3_5_VL_4B
+// #ifdef QWEN3_5_VL_4B
 
 
-    constexpr unsigned int QWEN3_5_PATCH_SIZE = 16;
-    constexpr unsigned int QWEN3_5_IMAGE_MERGE_SIZE=2;
-    constexpr unsigned int QWEN3_5_SPATIAL_MERGE_SIZE=2;
-    constexpr unsigned int QWEN3_5_SHORTEST_EDGE = 65536;
-    constexpr unsigned int QWEN3_5_LONGEST_EDGE = 16777216;
-    constexpr float QWEN3_5_VISION_RESCALE_FACTOR = 0.00392156862745098;
-    constexpr float QWEN3_5_VISION_RESCALE_IMAGE_MEAN = 0.5f;
-    constexpr float QWEN3_5_VISION_RESCALE_IMAGE_STD = 0.5f;
-    constexpr unsigned int QWEN3_5_TEMPORAL_PATCH_SIZE = 2;
-    constexpr unsigned int QWEN3_5_MERGE_SIZE = QWEN3_5_IMAGE_MERGE_SIZE;
+    // constexpr unsigned int QWEN3_5_PATCH_SIZE = 16;
+    // constexpr unsigned int QWEN3_5_IMAGE_MERGE_SIZE=2;
+    // constexpr unsigned int QWEN3_5_SPATIAL_MERGE_SIZE=2;
+    // constexpr unsigned int QWEN3_5_SHORTEST_EDGE = 65536;
+    // constexpr unsigned int QWEN3_5_LONGEST_EDGE = 16777216;
+    // constexpr float QWEN3_5_VISION_RESCALE_FACTOR = 0.00392156862745098;
+    // constexpr float QWEN3_5_VISION_RESCALE_IMAGE_MEAN = 0.5f;
+    // constexpr float QWEN3_5_VISION_RESCALE_IMAGE_STD = 0.5f;
+    // constexpr unsigned int QWEN3_5_TEMPORAL_PATCH_SIZE = 2;
+    // constexpr unsigned int QWEN3_5_MERGE_SIZE = QWEN3_5_IMAGE_MERGE_SIZE;
 
 
     
 
-#endif
+// #endif
 
 typedef struct {
     int height;
@@ -107,6 +107,37 @@ public:
     /// \return the current context length
     int get_current_context_length() override;
 
+
+
+    // parameters for vision process in qwen3.5 vl
+
+    unsigned int QWEN3_5_PATCH_SIZE;
+    unsigned int QWEN3_5_IMAGE_MERGE_SIZE;
+    unsigned int QWEN3_5_SPATIAL_MERGE_SIZE;
+    unsigned int QWEN3_5_SHORTEST_EDGE;
+    unsigned int QWEN3_5_LONGEST_EDGE;
+    float QWEN3_5_VISION_RESCALE_FACTOR;
+    float QWEN3_5_VISION_RESCALE_IMAGE_MEAN;
+    float QWEN3_5_VISION_RESCALE_IMAGE_STD;
+    unsigned int QWEN3_5_TEMPORAL_PATCH_SIZE;
+    unsigned int QWEN3_5_MERGE_SIZE;
+
+
+    inline void load_vision_preprocess_parameters(LM_Config& config){
+        // Note: this should be called by Impl:: constructor
+        QWEN3_5_PATCH_SIZE  = config._vision_config.value("QWEN3_5_PATCH_SIZE", -1);
+        QWEN3_5_IMAGE_MERGE_SIZE = config._vision_config.value("QWEN3_5_IMAGE_MERGE_SIZE", -1);
+        QWEN3_5_SPATIAL_MERGE_SIZE = config._vision_config.value("QWEN3_5_SPATIAL_MERGE_SIZE", -1);
+        QWEN3_5_SHORTEST_EDGE = config._vision_config.value("QWEN3_5_SHORTEST_EDGE", -1);
+        QWEN3_5_LONGEST_EDGE = config._vision_config.value("QWEN3_5_LONGEST_EDGE", -1);
+        QWEN3_5_VISION_RESCALE_FACTOR = config._vision_config.value("QWEN3_5_VISION_RESCALE_FACTOR", -1.0f);
+        QWEN3_5_VISION_RESCALE_IMAGE_MEAN = config._vision_config.value("QWEN3_5_VISION_RESCALE_IMAGE_MEAN", -1.0f);
+        QWEN3_5_VISION_RESCALE_IMAGE_STD = config._vision_config.value("QWEN3_5_VISION_RESCALE_IMAGE_STD", -1.0f);
+        QWEN3_5_TEMPORAL_PATCH_SIZE = config._vision_config.value("QWEN3_5_TEMPORAL_PATCH_SIZE", -1);
+
+        QWEN3_5_MERGE_SIZE = QWEN3_5_IMAGE_MERGE_SIZE;
+
+    }
 private:
     struct Impl;
     Impl* _impl;
