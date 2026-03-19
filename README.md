@@ -99,7 +99,7 @@ No model rewrites, no tuning — it just works.
 ## ✅ Highlights
 
 - **Runs fully on AMD Ryzen™ AI NPU** — no GPU or CPU load
-- **Lightweight runtime (16 MB)** — installs within **20 seconds**, easy to integrate    
+- **Lightweight runtime (17 MB)** — installs within **20 seconds**, easy to integrate    
 - **Developer-first flow** — like Ollama, but optimized for NPU  
 - **Support for long context windows** — up to 256k tokens (e.g., Qwen3-4B-Thinking-2507)  
 - **No low-level tuning required** — You focus on your app, we handle the rest
