@@ -52,13 +52,13 @@ Prefill time-to-first-token (TTFT) for Qwen3.5-4B on NPU (FastFlowLM) with diffe
 
 | Model        | HW  | 720p (1280×720) | 1080p (1920×1080) | 
 |--------------|-----------|----------------:|------------------:|
-| Qwen3.5-4B  | NPU (FLM) |            3.3 |               7.4 |
+| Qwen3.5-4B  | NPU (FLM) |            3.7 |               7.5 |
 
 
 **High Resolution Images:**
 
 | Model        | HW  | 2K (2560×1440) | 4K (3840×2160) |
 |--------------|-----------|---------------:|---------------:|
-| Qwen3.5-4B  | NPU (FLM) |           13.7 |             41.2 |
+| Qwen3.5-4B  | NPU (FLM) |           14.7 |             41.3 |
 
 > This test uses a short prompt: “Describe this image.”
