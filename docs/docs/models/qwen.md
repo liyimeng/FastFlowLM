@@ -248,6 +248,8 @@ The `-r` option determines image's height:
 - Image understanding adapts to image size. Image TTFT can range from under 1 second to ~200 seconds depending on resolution. Use lower-resolution images (720p or below) unless high resolution is required (e.g. OCR on small text).
 - Video understanding is not supported yet.
 
+---
+
 ## 🧩 Model Card: [Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B)
 
 - **Type:** Image-Text-to-Text
