@@ -14,12 +14,19 @@ jobs:
           - release: "24.04"
             ubuntu_ppa: "ppa:amd-team/xrt"
             distro: "ubuntu"
+            backports: ""
           - release: "25.10"
             ubuntu_ppa: "ppa:amd-team/xrt"
             distro: "ubuntu"
+            backports: ""
           - release: "26.04"
             ubuntu_ppa: ""
             distro: "ubuntu"
+            backports: ""
+          - release: "13"
+            distro: "debian"
+            ubuntu_ppa: ""
+            backports: "trixie-backports"
 
     permissions:
       contents: read
@@ -57,6 +64,7 @@ jobs:
           build-args: |
             BASE_IMAGE=${{ matrix.distro }}:${{ matrix.release }}
             UBUNTU_PPA=${{ matrix.ubuntu_ppa }}
+            BACKPORTS=${{ matrix.backports }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
