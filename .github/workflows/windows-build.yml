@@ -93,6 +93,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          files: fastflowlm-${{ github.ref_name }}-windows_amd64.zip
+          files: fastflowlm-*.zip
           overwrite_files: true
           fail_on_unmatched_files: true
